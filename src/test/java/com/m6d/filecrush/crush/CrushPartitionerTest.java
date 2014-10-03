@@ -52,7 +52,7 @@ public class CrushPartitionerTest {
 	public void setupPartitionMap() throws IOException {
 		job = new JobConf(false);
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.set("crush.partition.map", tmp.getRoot().getAbsolutePath() + "/partition-map");
 

@@ -48,7 +48,7 @@ public class CrushOptionParsingTest {
 		JobConf job = new JobConf(false);
 		crush.setConf(job);
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.setInt("mapred.reduce.tasks", 20);
 		job.setLong("dfs.block.size", 1024 * 1024 * 64);

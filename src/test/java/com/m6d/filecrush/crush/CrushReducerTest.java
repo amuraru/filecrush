@@ -60,7 +60,7 @@ public class CrushReducerTest {
 
 		job.set("mapred.output.dir", outDir.getAbsolutePath());
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 
 		job.setLong("crush.timestamp", 98765);
@@ -169,7 +169,7 @@ public class CrushReducerTest {
 
 		job.set("mapred.tip.id", "task_201011081200_14527_r_1234");
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.set("mapred.output.dir", outDir.getAbsolutePath());
 
@@ -205,7 +205,7 @@ public class CrushReducerTest {
 
 		job.set("mapred.tip.id", "task_201011081200_14527_r_1234");
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.set("mapred.output.dir", outDir.getAbsolutePath());
 
@@ -241,7 +241,7 @@ public class CrushReducerTest {
 
 		job.set("mapred.tip.id", "task_201011081200_14527_r_1234");
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.set("mapred.output.dir", outDir.getAbsolutePath());
 
@@ -277,7 +277,7 @@ public class CrushReducerTest {
 
 		job.set("mapred.tip.id", "task_201011081200_14527_r_1234");
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.set("mapred.output.dir", outDir.getAbsolutePath());
 
@@ -314,7 +314,7 @@ public class CrushReducerTest {
 
 		job.set("mapred.tip.id", "task_201011081200_14527_r_1234");
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.set("mapred.output.dir", outDir.getAbsolutePath());
 
@@ -350,7 +350,7 @@ public class CrushReducerTest {
 
 		job.set("mapred.tip.id", "task_201011081200_14527_r_1234");
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.set("mapred.output.dir", outDir.getAbsolutePath());
 

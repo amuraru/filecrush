@@ -32,14 +32,12 @@ import java.util.List;
 
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.util.ToolRunner;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.m6d.filecrush.crush.Crush;
 
 /**
  * Dfs block size will be set to 50 and threshold set to 20%.
@@ -57,7 +55,7 @@ public class CrushStandAloneTextTest {
 	public void setup() throws Exception {
 		job = new JobConf(false);
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.setLong("dfs.block.size", 50);
 	}

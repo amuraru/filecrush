@@ -76,7 +76,7 @@ public class CrushTest {
 	public void setupJob() throws IOException {
 		job = new JobConf(false);
 
-		job.set("fs.default.name", "file:///");
+		job.set("fs.defaultFS", "file:///");
 		job.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
 		job.setInt("mapred.reduce.tasks", 5);
 		job.setLong("dfs.block.size", 50);
