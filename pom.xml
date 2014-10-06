@@ -26,6 +26,18 @@
     <jetty.version>6.1.14</jetty.version>
   </properties>
 
+  <scm>
+    <connection>scm:git:git://github.com/deltaprojects/filecrush.git</connection>
+    <developerConnection>scm:git:git@github.com:deltaprojects/filecrush.git</developerConnection>
+    <url>http://github.com/deltaprojects/filecrush/</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <issueManagement>
+    <system>github</system>
+    <url>http://github.com/deltaprojects/filecrush/issues</url>
+  </issueManagement>
+
   <build>
     <plugins>
       <plugin>
