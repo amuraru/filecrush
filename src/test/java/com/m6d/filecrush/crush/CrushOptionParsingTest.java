@@ -324,6 +324,8 @@ public class CrushOptionParsingTest {
 		assertThat(job.get("crush.0.regex.replacement"), equalTo("crushed_file-20101116123015-${crush.task.num}-${crush.file.num}"));
 		assertThat(job.get("crush.0.input.format"), equalTo("org.apache.hadoop.mapred.SequenceFileInputFormat"));
 		assertThat(job.get("crush.0.output.format"), equalTo("org.apache.hadoop.mapred.SequenceFileOutputFormat"));
+
+    assertThat(job.get("crush.file.regex"), equalTo(".+"));
 	}
 
 	@Test

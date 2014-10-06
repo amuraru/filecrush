@@ -54,6 +54,9 @@ GLOBAL OPTIONS
 --verbose
   Print even more information to the console about what the crush is doing.
 
+--fileregex
+  Regular expression that matches a file name. Defaults to .+.
+
 DIRECTORY OPTIONS
 
 If specified, these options must be appear as a group. When specifying multiple groups of these options, order matters. Defaults for directory options are not used if any are specified. See the EXAMPLES section.
