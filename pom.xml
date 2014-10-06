@@ -16,15 +16,37 @@
   </repositories>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <hadoop.version>2.0.0-mr1-cdh4.4.0</hadoop.version>
     <mr.version>2.0.0-mr1-cdh4.4.0</mr.version>
-    <slf4j.version>1.6.1</slf4j.version>
+    <slf4j.version>1.7.7</slf4j.version>
     <junit.version>4.8.2</junit.version>
     <mockito.version>1.8.5</mockito.version>
     <hamcrest.version>1.2</hamcrest.version>
     <easymock.version>3.0</easymock.version>
     <jetty.version>6.1.14</jetty.version>
   </properties>
+
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <distributionManagement>
+    <repository>
+      <id>mavenrepo.service.delta.prod</id>
+      <name>mavenrepo.service.delta.prod-releases</name>
+      <url>http://mavenrepo.service.delta.prod/artifactory/libs-releases-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>mavenrepo.service.delta.prod</id>
+      <name>mavenrepo.service.delta.prod-snapshots</name>
+      <url>http://mavenrepo.service.delta.prod/artifactory/libs-snapshots-local</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <scm>
     <connection>scm:git:git://github.com/deltaprojects/filecrush.git</connection>
@@ -42,7 +64,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.1</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
@@ -71,7 +93,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>2.5</version>
         <configuration>
           <archive>
             <manifest>
@@ -90,6 +112,62 @@
         </executions>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.7.0.201403182114</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.17</version>
+          <configuration>
+            <useFile>false</useFile>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5</version>
+          <configuration>
+            <tagNameFormat>@{project.version}</tagNameFormat>
+            <useReleaseProfile>true</useReleaseProfile>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-deploy-plugin</artifactId>
+              <version>2.8.1</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-source-plugin</artifactId>
+              <version>2.3</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <version>2.9.1</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <dependencies>
