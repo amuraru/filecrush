@@ -162,116 +162,55 @@ public class Crush extends Configured implements Tool {
    */
   private Verbosity console;
 
-  @SuppressWarnings("static-access")
   Options buildOptions() {
     Options options = new Options();
     Option option;
 
-    option = OptionBuilder
-        .withDescription("Print this help message")
-        .withLongOpt("help")
-        .create("?");
-
+    option = new Option("?", "help", false, "Print this help message");
     options.addOption(option);
 
-    option = OptionBuilder
-        .hasArg()
-        .withArgName("directory regex")
-        .withDescription("Regular expression that matches a directory name. Used to match a directory with a correponding replacement string")
-        .withLongOpt("regex")
-        .create();
-
+    option = new Option(null, "regex", true, "Regular expression that matches a directory name. Used to match a directory with a correponding replacement string");
+    option.setArgName("directory regex");
     options.addOption(option);
 
-    option = OptionBuilder
-        .hasArg()
-        .withArgName("file regex")
-        .withDescription("Regular expression that matches a file name. Used to match a file.")
-        .withLongOpt("fileregex")
-        .create();
-
+    option = new Option(null, "fileregex", true, "Regular expression that matches a file name. Used to match a file");
+    option.setArgName("file regex");
     options.addOption(option);
 
-    option = OptionBuilder
-        .hasArg()
-        .withArgName("replacement string")
-        .withDescription("Replacement string used with the corresponding regex to calculate the name of a directory's crush output file")
-        .withLongOpt("replacement")
-        .create();
-
+    option = new Option(null, "replacement", true, "Replacement string used with the corresponding regex to calculate the name of a directory's crush output file");
+    option.setArgName("replacement string");
     options.addOption(option);
 
-    option = OptionBuilder
-        .hasArg()
-        .withArgName("FQN input format")
-        .withDescription("Input format used to open the files of directories matching the corresponding regex")
-        .withLongOpt("input-format")
-        .create();
-
+    option = new Option(null, "input-format", true, "Input format used to open the files of directories matching the corresponding regex");
+    option.setArgName("FQN input format");
     options.addOption(option);
 
-    option = OptionBuilder
-        .hasArg()
-        .withArgName("FQN output format")
-        .withDescription("Output format used to open the files of directories matching the corresponding regex")
-        .withLongOpt("output-format")
-        .create();
-
+    option = new Option(null, "output-format", true, "Output format used to open the files of directories matching the corresponding regex");
+    option.setArgName("FQN output format");
     options.addOption(option);
 
-    option = OptionBuilder
-        .hasArg()
-        .withArgName("threshold")
-        .withDescription("Threshold relative to the dfs block size over which a file becomes eligible for crushing. Must be in the range (0 and 1]. Default 0.75")
-        .withLongOpt("threshold")
-        .create();
-
+    option = new Option(null, "threshold", true, "Threshold relative to the dfs block size over which a file becomes eligible for crushing. Must be in the range (0 and 1]. Default 0.75");
+    option.setArgName("threshold");
     options.addOption(option);
 
-    option = OptionBuilder
-        .hasArg()
-        .withArgName("max-file-blocks")
-        .withDescription("The maximum number of dfs blocks per output file. Input files are grouped into output files under the assumption that the input and output compression codecs have comparable efficiency. Default is 8.")
-        .withLongOpt("max-file-blocks")
-        .create();
-
+    option = new Option(null, "max-file-blocks", true, "The maximum number of dfs blocks per output file. Input files are grouped into output files under the assumption that the input and output compression codecs have comparable efficiency. Default is 8.");
+    option.setArgName("max-file-blocks");
     options.addOption(option);
 
-    option = OptionBuilder
-        .withDescription("Do not skip directories containing single files.")
-        .withLongOpt("include-single-file-dirs")
-        .create();
-
+    option = new Option(null, "include-single-file-dirs", false, "Do not skip directories containing single files.");
     options.addOption(option);
 
-    option = OptionBuilder
-        .hasArg()
-        .withArgName("compression codec")
-        .withDescription("FQN of the compression codec to use or \"none\". Defaults to DefaultCodec.")
-        .withLongOpt("compress")
-        .create();
-
+    option = new Option(null, "compress", true, "FQN of the compression codec to use or \"none\". Defaults to DefaultCodec.");
+    option.setArgName("compression codec");
     options.addOption(option);
 
-    option = OptionBuilder
-        .withDescription("Operate in clone mode.")
-        .withLongOpt("clone")
-        .create();
-
+    option = new Option(null, "clone", false, "Operate in clone mode.");
     options.addOption(option);
 
-    option = OptionBuilder
-        .withDescription("Info logging to console.")
-        .withLongOpt("info")
-        .create();
-
+    option = new Option(null, "info", false, "Info logging to console.");
     options.addOption(option);
 
-    option = OptionBuilder
-        .withDescription("Verbose logging to console.")
-        .withLongOpt("verbose")
-        .create();
-
+    option = new Option(null, "verbose", false, "Verbose logging to console.");
     options.addOption(option);
 
     return options;
