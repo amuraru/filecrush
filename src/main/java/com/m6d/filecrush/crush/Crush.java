@@ -402,14 +402,14 @@ public class Crush extends Configured implements Tool {
       }
 
 
-      String tmpBlockSize = job.get("dfs.block.size");
+      long tmpBlockSize = job.getLong("dfs.block.size", job.getLong("dfs.blocksize", -1L));
 
-      if (tmpBlockSize != null) {
-        dfsBlockSize = Long.parseLong(tmpBlockSize);
+      if (tmpBlockSize > 0 ) {
+        dfsBlockSize = tmpBlockSize;
       } else {
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(conf);
-        dfsBlockSize = fs.getDefaultBlockSize(srcDir);
+        dfsBlockSize = fs.getFileStatus(srcDir).getBlockSize();
         fs.close();
       }
       maxEligibleSize = (long) (dfsBlockSize * threshold);
@@ -921,7 +921,7 @@ public class Crush extends Configured implements Tool {
 
     Writer writer = SequenceFile.createWriter(fs, job, bucketFiles, Text.class, Text.class, CompressionType.BLOCK);
 
-    int numPartitions = Integer.parseInt(job.get("mapred.reduce.tasks"));
+    int numPartitions = job.getInt("mapred.reduce.tasks", 1);
 
     Bucketer partitionBucketer = new Bucketer(numPartitions, 0, false);
     partitionBucketer.reset("partition-map");
