@@ -957,7 +957,8 @@ public class Crush extends Configured implements Tool {
 
               if (content.isDir()) {
                 nextLevel.add(path);
-              } else if (Pattern.matches(job.get("crush.file.regex"), path.getName())) {
+              } else if (Pattern.matches(job.get("crush.file.regex"), path.getName()) &&
+                      findMatcher(path.getParent()) >= 0) {
                 boolean changed = uncrushedFiles.add(path.toUri().getPath());
 
                 assert changed : path.toUri().getPath();
