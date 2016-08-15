@@ -73,6 +73,8 @@ public class Crush extends Configured implements Tool {
    */
   private Path outDir;
 
+  private Map<Matcher, String> outDirRegexesReplacements = new HashMap<Matcher, String>();
+
   private Mode mode;
 
   /**
@@ -179,6 +181,14 @@ public class Crush extends Configured implements Tool {
 
     option = new Option(null, "replacement", true, "Replacement string used with the corresponding regex to calculate the name of a directory's crush output file");
     option.setArgName("replacement string");
+    options.addOption(option);
+
+    option = new Option(null, "output-dir-regex", true, "Regex string used to update files final output path");
+    option.setArgName("output-dir-regex regex");
+    options.addOption(option);
+
+    option = new Option(null, "output-dir-replacement", true, "Replacement string used to update files final output path");
+    option.setArgName("output-dir-replacement string");
     options.addOption(option);
 
     option = new Option(null, "input-format", true, "Input format used to open the files of directories matching the corresponding regex");
@@ -371,6 +381,22 @@ public class Crush extends Configured implements Tool {
 
         if (cli.hasOption("replacement")) {
           replacements = asList(cli.getOptionValues("replacement"));
+        }
+
+        List<String> outDirReplacements = new ArrayList<>();
+        if (cli.hasOption("output-dir-replacement")) {
+          outDirReplacements = asList(cli.getOptionValues("output-dir-replacement"));
+        }
+
+        List<String> outDirRegexes = new ArrayList<>();
+        if (cli.hasOption("output-dir-regex")) {
+          outDirRegexes = asList(cli.getOptionValues("output-dir-regex"));
+        }
+        if (outDirRegexes.size() != outDirReplacements.size()) {
+          throw new IllegalArgumentException("Number of output-dir-regex and output-dir-replacements parameters must match!");
+        }
+        for (int i = 0; i < outDirRegexes.size(); i++) {
+          outDirRegexesReplacements.put(Pattern.compile(outDirRegexes.get(i)).matcher("dummy"),outDirReplacements.get(i));
         }
 
         if (cli.hasOption("input-format")) {
@@ -769,7 +795,8 @@ public class Crush extends Configured implements Tool {
 
     for (String crushOutputFile : crushOutputFiles) {
       Path srcPath = new Path(crushOutputFile);
-      Path destPath = new Path(destName + crushOutputFile.substring(partToReplace.length())).getParent();
+      String destDir =  replaceDestinationDir(destName + crushOutputFile.substring(partToReplace.length()));
+      Path destPath = new Path(destDir).getParent();
 
       rename(srcPath, destPath, null);
     }
@@ -782,11 +809,23 @@ public class Crush extends Configured implements Tool {
 		 */
     for (String name : skippedFiles) {
       Path srcPath = new Path(name);
-      Path destPath = new Path(destName + name.substring(srcDirName.length())).getParent();
+      String destDir = replaceDestinationDir(destName + name.substring(srcDirName.length()));
+      Path destPath = new Path(destDir).getParent();
 
       rename(srcPath, destPath, null);
     }
   }
+
+  private String replaceDestinationDir(String dir){
+    String destDir = dir;
+    for (Map.Entry<Matcher, String> outDirRegexesReplacement : outDirRegexesReplacements.entrySet()) {
+      Matcher matcher = outDirRegexesReplacement.getKey();
+      matcher.reset(destDir);
+      destDir = matcher.replaceAll(outDirRegexesReplacement.getValue());
+    }
+    return destDir;
+  }
+
 
   /**
    * Moves all crush input files to {@link #dest} and then moves the crush output file to {@link #srcDir}.
