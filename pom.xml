@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>se.deltaprojects</groupId>
+  <groupId>com.m6d</groupId>
   <artifactId>filecrush</artifactId>
-  <version>1.0.3-SNAPSHOT</version>
-  <description>filecrush utility originally from M6D</description>
+  <name>M6D App - Filecrush</name>
+  <version>2.2.3.1</version>
+  <description>filecrush utility</description>
   <packaging>jar</packaging>
 
   <repositories>
