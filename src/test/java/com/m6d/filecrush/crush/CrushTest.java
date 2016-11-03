@@ -287,32 +287,6 @@ public class CrushTest {
 	}
 
 	@Test
-	public void dirWithNoMatchingRegex() throws Exception {
-		/*
-		 * Create a non-empty directory.
-		 */
-		File src = tmp.newFolder("src");
-		tmp.newFolder("src/foo");
-		tmp.newFile("src/foo/file");
-
-		try {
-			run("--regex", ".+/in",
-					"--replacement", "foo",
-					"--input-format", "org.apache.hadoop.mapred.TextInputFormat",
-					"--output-format", "org.apache.hadoop.mapred.TextOutputFormat",
-					"--threshold", "0.5",
-					"--max-file-blocks", "100",
-					src.getAbsolutePath(), "out", "20101116123015");
-
-			fail();
-		} catch (IllegalArgumentException e) {
-			if (!e.getMessage().contains("src/foo")) {
-				throw e;
-			}
-		}
-	}
-
-	@Test
 	public void bucketing() throws Exception {
 		File in = tmp.newFolder("in");
 
