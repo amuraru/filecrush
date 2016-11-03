@@ -138,6 +138,7 @@ public class CrushMapReduceTest extends HadoopTestCase {
 		job.setBoolean("mapred.output.compress", true);
 		job.set("mapred.output.compression.type", CompressionType.BLOCK.name());
 		job.set("mapred.output.compression.codec", CustomCompressionCodec.class.getName());
+		job.setLong("dfs.block.size", 64*1024*1024);
 
 		FileSystem fs = getFileSystem();
 
