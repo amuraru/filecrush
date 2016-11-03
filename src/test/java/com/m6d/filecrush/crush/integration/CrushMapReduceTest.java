@@ -16,9 +16,7 @@
 
 package com.m6d.filecrush.crush.integration;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.io.BufferedReader;
@@ -704,6 +702,63 @@ public class CrushMapReduceTest extends HadoopTestCase {
 		assertThat(jobCounters.getCounter(ReducerCounter.FILES_CRUSHED),		equalTo(0L));
 		assertThat(jobCounters.getCounter(ReducerCounter.RECORDS_CRUSHED),	equalTo(0L));
 	}
+
+    @Test
+    public void executeCrushTextFiles() throws Exception {
+        int noOfFiles = 10;
+        int noOfLines = 10;
+        for (int fileNo = 0; fileNo < noOfFiles; fileNo++) {
+            Path path = new Path("in/file" + fileNo + ".txt");
+            PrintWriter writer = new PrintWriter(new BufferedWriter(new PrintWriter(getFileSystem().create(path, false))));
+            int k, v;
+            // write some k,v TAB separated lines
+            for (k = 0; k < noOfLines / 2; k++) {
+                writer.printf("%d\t%d\n", k, k);
+            }
+            // then write some key only lines
+            for (k = noOfLines / 2; k < noOfLines; k++) {
+                writer.printf("%d\n", k);
+            }
+            writer.close();
+        }
+
+
+        Crush crush = new Crush();
+
+        ToolRunner.run(job, crush, new String[]{
+                "--input-format=text",
+                "--output-format=text",
+                "--compress=none",
+                "in", "out", "20161101153015"
+        });
+
+
+        BufferedReader reader;
+        String dir = "out";
+        String crushOutMask = "crushed_file-*-*-*";
+
+
+        Path crushOut;
+
+        Path path1 = new Path(dir + "/" + crushOutMask);
+
+        FileStatus[] globStatus = getFileSystem().globStatus(path1);
+
+        if (globStatus == null || 1 != globStatus.length || globStatus[0].isDir()) {
+            fail(crushOutMask);
+        }
+        crushOut = globStatus[0].getPath();
+
+        reader = new BufferedReader(new InputStreamReader(getFileSystem().open(crushOut)));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] kv = line.split("\t");
+            System.out.println(line);
+            if (kv.length > 1) {
+                assertThat(kv[0], equalToIgnoringCase(kv[1]));
+            }
+        }
+    }
 
 	@Test
 	public void executeBackwardsCompatibleText() throws Exception {

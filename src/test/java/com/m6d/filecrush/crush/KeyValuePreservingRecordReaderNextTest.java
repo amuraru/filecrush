@@ -114,6 +114,16 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 
 		assertThat(key.toString(), equalTo("a reeeeeeeally long key"));
 		assertThat(value.toString(), equalTo("value0\tvalue1\tvalue2\tvalue3\tvalue4"));
+
+		/*
+		 * Key only line following a K-V line.
+		 */
+		offset = offset + line.length() + 1;
+		line = "key";
+		assertThat(reader.next(key, value), is(true));
+
+		assertThat(key.toString(), equalTo("key"));
+		assertThat(value.toString(), equalTo(""));
 	}
 
 	@Override

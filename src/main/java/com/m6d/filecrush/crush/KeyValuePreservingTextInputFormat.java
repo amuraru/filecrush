@@ -117,6 +117,7 @@ public class KeyValuePreservingTextInputFormat extends FileInputFormat<Text, Tex
 					}
 				} else {
 					key.set(delValue);
+					value.clear();
 				}
 			}
 
