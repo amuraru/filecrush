@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.RecordReader;
 import org.junit.Before;
@@ -32,27 +33,20 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.m6d.filecrush.crush.KeyValuePreservingTextInputFormat.KeyValuePreservingRecordReader;
+import com.m6d.filecrush.crush.LinePreservingTextInputFormat.LinePreservingRecordReader;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class KeyValuePreservingRecordReaderDelegationTest {
+public class LinePreservingRecordReaderDelegationTest {
 
 	@Mock
 	private PartialRecordReader delegate;
 
-	private KeyValuePreservingRecordReader reader;
+	private LinePreservingRecordReader reader;
 
 	@Before
 	public void before() {
-		reader = new KeyValuePreservingRecordReader(delegate);
-	}
-
-	@Test
-	public void createValueDelegation() {
-		reader.createValue();
-
-		verify(delegate).createValue();
+		reader = new LinePreservingRecordReader(delegate);
 	}
 
 	@Test
@@ -69,6 +63,14 @@ public class KeyValuePreservingRecordReaderDelegationTest {
 		verify(delegate).close();
 	}
 
+	@Test
+	public void createValueDoesNotDelegate() {
+		NullWritable value = reader.createValue();
+		assertThat(value, not(nullValue()));
+		assertThat(reader.createValue(), sameInstance(value));
+	}
+
+	@Test
 	public void createKeyDoesNotDelegate() {
 		Text key = reader.createKey();
 

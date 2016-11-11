@@ -35,9 +35,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.m6d.filecrush.crush.CrushReducer;
-import com.m6d.filecrush.crush.KeyValuePreservingTextInputFormat;
-
 @SuppressWarnings("deprecation")
 public class CrushReducerTest {
 
@@ -114,8 +111,8 @@ public class CrushReducerTest {
 	@Test
 	public void inputFormatList() {
 		assertThat(reducer.getInputFormatList(), equalTo(Arrays.<Class<?>> asList(SequenceFileInputFormat.class,
-																																							KeyValuePreservingTextInputFormat.class,
-																																							KeyValuePreservingTextInputFormat.class)));
+																																							LinePreservingTextInputFormat.class,
+																																							LinePreservingTextInputFormat.class)));
 	}
 
 	@Test

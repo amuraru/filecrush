@@ -37,6 +37,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.SequenceFile.Reader;
@@ -703,62 +704,72 @@ public class CrushMapReduceTest extends HadoopTestCase {
 		assertThat(jobCounters.getCounter(ReducerCounter.RECORDS_CRUSHED),	equalTo(0L));
 	}
 
-    @Test
-    public void executeCrushTextFiles() throws Exception {
-        int noOfFiles = 10;
-        int noOfLines = 10;
-        for (int fileNo = 0; fileNo < noOfFiles; fileNo++) {
-            Path path = new Path("in/file" + fileNo + ".txt");
-            PrintWriter writer = new PrintWriter(new BufferedWriter(new PrintWriter(getFileSystem().create(path, false))));
-            int k, v;
-            // write some k,v TAB separated lines
-            for (k = 0; k < noOfLines / 2; k++) {
-                writer.printf("%d\t%d\n", k, k);
-            }
-            // then write some key only lines
-            for (k = noOfLines / 2; k < noOfLines; k++) {
-                writer.printf("%d\n", k);
-            }
-            writer.close();
-        }
+	@Test
+	/**
+	 * Test that text files are correctly squashed when mixed lines having/no-having TAB char exist.
+	 */
+	public void executeCrushTextFiles() throws Exception {
+		int noOfFiles = 10;
+		int noOfLines = 10;
+		for (int fileNo = 0; fileNo < noOfFiles; fileNo++) {
+			Path path = new Path("in/file" + fileNo + ".txt");
+			PrintWriter writer = new PrintWriter(new BufferedWriter(new PrintWriter(getFileSystem().create(path, false))));
+			int k;
+			// write 1/2 k,v TAB separated lines
+			for (k = 0; k < noOfLines / 2; k++) {
+				writer.printf("%d\t%d\n", k, k);
+			}
+			// then write 1/2 key only lines
+			for (k = noOfLines / 2; k < noOfLines; k++) {
+				writer.printf("%d\n", k);
+			}
+			writer.close();
+		}
 
 
-        Crush crush = new Crush();
+		Crush crush = new Crush();
 
-        ToolRunner.run(job, crush, new String[]{
-                "--input-format=text",
-                "--output-format=text",
-                "--compress=none",
-                "in", "out", "20161101153015"
-        });
-
-
-        BufferedReader reader;
-        String dir = "out";
-        String crushOutMask = "crushed_file-*-*-*";
+		ToolRunner.run(job, crush, new String[]{
+				"--input-format=text",
+				"--output-format=text",
+				"--compress=none",
+				"in", "out", "20161101153015"
+		});
 
 
-        Path crushOut;
+		BufferedReader reader;
+		String dir = "out";
+		String crushOutMask = "crushed_file-*-*-*";
 
-        Path path1 = new Path(dir + "/" + crushOutMask);
 
-        FileStatus[] globStatus = getFileSystem().globStatus(path1);
+		Path crushOut;
 
-        if (globStatus == null || 1 != globStatus.length || globStatus[0].isDir()) {
-            fail(crushOutMask);
-        }
-        crushOut = globStatus[0].getPath();
+		Path path = new Path(dir + "/" + crushOutMask);
 
-        reader = new BufferedReader(new InputStreamReader(getFileSystem().open(crushOut)));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] kv = line.split("\t");
-            System.out.println(line);
-            if (kv.length > 1) {
-                assertThat(kv[0], equalToIgnoringCase(kv[1]));
-            }
-        }
-    }
+		FileStatus[] globStatus = getFileSystem().globStatus(path);
+
+		if (globStatus == null || 1 != globStatus.length || globStatus[0].isDir()) {
+			fail(crushOutMask);
+		}
+		crushOut = globStatus[0].getPath();
+
+		reader = new BufferedReader(new InputStreamReader(getFileSystem().open(crushOut)));
+		String line;
+		int linesWithTab = 0;
+		int linesWithoutTab = 0;
+		while ((line = reader.readLine()) != null) {
+			boolean hasTab = line.indexOf('\t') > 0;
+			if (hasTab) {
+				linesWithTab++;
+				String[] kv = line.split("\t", 2);
+				assertThat(kv[0], equalToIgnoringCase(kv[1]));
+			} else {
+				linesWithoutTab++;
+			}
+		}
+		assertEquals(linesWithoutTab, (noOfFiles * noOfLines) / 2);
+		assertEquals(linesWithTab, (noOfFiles * noOfLines) / 2);
+	}
 
 	@Test
 	public void executeBackwardsCompatibleText() throws Exception {
@@ -1088,7 +1099,7 @@ public class CrushMapReduceTest extends HadoopTestCase {
 			assertThat(reader.getCompressionCodec().getClass(), equalTo((Object) codec.getClass()));
 
 			Text key = new Text();
-			Text value = new Text();
+			NullWritable value = NullWritable.get();
 
 			Set<String> expected = new HashSet<String>();
 			Set<String> actual = new HashSet<String>();
@@ -1100,7 +1111,7 @@ public class CrushMapReduceTest extends HadoopTestCase {
 					reader.next(key, value);
 
 					assertThat(expected.add(String.format("%s\t%s", k, v)), is(true));
-					assertThat(actual.add(String.format("%s\t%s", key, value)), is(true));
+					assertThat(actual.add(key.toString()), is(true));
 				}
 			}
 

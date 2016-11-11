@@ -17,24 +17,25 @@ package com.m6d.filecrush.crush;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.RecordReader;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.m6d.filecrush.crush.KeyValuePreservingTextInputFormat.KeyValuePreservingRecordReader;
 
-
-public class KeyValuePreservingRecordReaderNextTest implements RecordReader<LongWritable, Text> {
+public class LinePreservingRecordReaderNextTest implements RecordReader<LongWritable, Text> {
 
 	private final Text key = new Text();
 
-	private final Text value = new Text();
+	private final NullWritable value = NullWritable.get();
 
 	private boolean next;
 
@@ -42,11 +43,11 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 
 	private String line;
 
-	private KeyValuePreservingRecordReader reader;
+	private LinePreservingTextInputFormat.LinePreservingRecordReader reader;
 
 	@Before
 	public void before() {
-		reader = new KeyValuePreservingRecordReader(this);
+		reader = new LinePreservingTextInputFormat.LinePreservingRecordReader(this);
 	}
 
 	@Test
@@ -57,7 +58,7 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 	}
 
 	@Test
-	public void keyAndValueArePreserved() throws IOException {
+	public void lineIsPreserved() throws IOException {
 		next = true;
 
 		/*
@@ -67,10 +68,17 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 		line = "key\tvalue0\tvalue1\tvalue2";
 
 		assertThat(reader.next(key, value), is(true));
+		assertThat(key.toString(), equalTo(line));
 
-		assertThat(key.toString(), equalTo("key"));
-		assertThat(value.toString(), equalTo("value0\tvalue1\tvalue2"));
+		/*
+		 * empty line.
+		 */
+		offset = offset + line.length() + 1;
+		line = "";
+		assertThat(reader.next(key, value), is(true));
 
+		assertThat(key.toString(), equalTo(line));
+		assertEquals(value, NullWritable.get());
 
 		/*
 		 * No key with tab and value.
@@ -79,8 +87,8 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 		line = "\tvalue0\tvalue1\tvalue2";
 		assertThat(reader.next(key, value), is(true));
 
-		assertThat(key.toString(), equalTo(""));
-		assertThat(value.toString(), equalTo("value0\tvalue1\tvalue2"));
+		assertThat(key.toString(), equalTo(line));
+		assertEquals(value, NullWritable.get());
 
 
 		/*
@@ -90,9 +98,8 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 		line = "key and tab\t";
 		assertThat(reader.next(key, value), is(true));
 
-		assertThat(key.toString(), equalTo("key and tab"));
-		assertThat(value.toString(), equalTo(""));
-
+		assertThat(key.toString(), equalTo(line));
+		assertEquals(value, NullWritable.get());
 
 		/*
 		 * Key only. No tab or value.
@@ -101,8 +108,8 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 		line = "key only";
 		assertThat(reader.next(key, value), is(true));
 
-		assertThat(key.toString(), equalTo("key only"));
-		assertThat(value.toString(), equalTo(""));
+		assertThat(key.toString(), equalTo(line));
+		assertEquals(value, NullWritable.get());
 
 
 		/*
@@ -112,8 +119,8 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 		line = "a reeeeeeeally long key\tvalue0\tvalue1\tvalue2\tvalue3\tvalue4";
 		assertThat(reader.next(key, value), is(true));
 
-		assertThat(key.toString(), equalTo("a reeeeeeeally long key"));
-		assertThat(value.toString(), equalTo("value0\tvalue1\tvalue2\tvalue3\tvalue4"));
+		assertThat(key.toString(), equalTo(line));
+		assertEquals(value, NullWritable.get());
 
 		/*
 		 * Key only line following a K-V line.
@@ -122,8 +129,8 @@ public class KeyValuePreservingRecordReaderNextTest implements RecordReader<Long
 		line = "key";
 		assertThat(reader.next(key, value), is(true));
 
-		assertThat(key.toString(), equalTo("key"));
-		assertThat(value.toString(), equalTo(""));
+		assertThat(key.toString(), equalTo(line));
+		assertEquals(value, NullWritable.get());
 	}
 
 	@Override

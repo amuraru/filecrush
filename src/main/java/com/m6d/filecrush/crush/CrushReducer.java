@@ -211,7 +211,7 @@ public class CrushReducer extends MapReduceBase implements Reducer<Text, Text, T
 				Class<?> inFormatCls;
 
 				if (value.equals(TextInputFormat.class.getName())) {
-					inFormatCls = KeyValuePreservingTextInputFormat.class;
+					inFormatCls = LinePreservingTextInputFormat.class;
 				} else {
 				 inFormatCls = Class.forName(value);
 

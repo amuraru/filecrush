@@ -42,6 +42,7 @@ import java.util.Map.Entry;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.SequenceFile.Reader;
@@ -495,7 +496,7 @@ public class CrushReducerParameterizedTest extends EasyMockSupport {
 			}
 
 			Text key = new Text();
-			Text value = new Text();
+			NullWritable value = NullWritable.get();
 
 			for (String fileName : fileNames) {
 				int max = Integer.parseInt(fileName.substring(4));
@@ -503,8 +504,7 @@ public class CrushReducerParameterizedTest extends EasyMockSupport {
 				for (int k = 1, v = max * 100 + 1; k <= max; k++, v++) {
 					reader.next(key, value);
 
-					assertThat(fileName, key.toString(), equalTo(Integer.toString(k)));
-					assertThat(fileName, value.toString(), equalTo(Integer.toString(v)));
+					assertThat(fileName, key.toString(), equalTo(String.format("%s\t%s", Integer.toString(k), Integer.toString(v))));
 				}
 			}
 
